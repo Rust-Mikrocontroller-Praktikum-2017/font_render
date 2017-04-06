@@ -1,0 +1,8 @@
+[package]
+name = "font_render"
+version = "0.1.0"
+authors = ["Philipp Oppermann <dev@phil-opp.com>"]
+
+[dependencies]
+font-rs = {git = "https://github.com/phil-opp/font-rs.git", branch = "no-std"}
+stb_truetype = {git = "https://github.com/phil-opp/stb_truetype-rs.git"}
