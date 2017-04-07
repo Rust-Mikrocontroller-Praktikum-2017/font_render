@@ -45,6 +45,10 @@ impl<'a> TextWriter<'a> {
         TextWriter::new(TTF, 15, 480)
     }
 
+    pub fn set_text_size(&mut self, text_size: u32) {
+        self.text_size = text_size;
+    }
+
     pub fn print_char<F>(&mut self, mut c: char, mut print_at: F)
         where
         F: FnMut(Coords, u8)
