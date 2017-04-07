@@ -1,3 +1,4 @@
+#![feature(core_float)]
 #![no_std]
 
 extern crate stb_truetype;
@@ -138,4 +139,98 @@ impl<'a> TextWriter<'a> {
 pub struct Coords {
     pub x: usize,
     pub y: usize,
+}
+
+#[no_mangle]
+pub unsafe extern fn fmodf(x : f32, y : f32) -> f32 {
+    use core::mem;
+    use core::num::Float;
+
+    let mut ux_i: u32 = mem::transmute(x);
+    let mut uy_i: u32 = mem::transmute(y);
+
+    let mut _current_block;
+    let mut ex : i32 = (ux_i >> 23i32 & 0xffu32) as (i32);
+    let mut ey : i32 = (uy_i >> 23i32 & 0xffu32) as (i32);
+    let sx : u32 = ux_i & 0x80000000u32;
+    let mut i : u32;
+    let mut uxi : u32 = ux_i;
+    if uy_i << 1i32 == 0u32 || y.is_nan() || ex == 0xffi32 {
+        x * y / (x * y)
+    } else if uxi << 1i32 <= uy_i << 1i32 {
+        if uxi << 1i32 == uy_i << 1i32 { 0i32 as (f32) * x } else { x }
+    } else {
+        if ex == 0 {
+            i = uxi << 9i32;
+            'loop5: loop {
+                if !(i >> 31i32 == 0u32) {
+                    break;
+                }
+                ex = ex - 1;
+                i = i << 1i32;
+            }
+            uxi = uxi << -ex + 1i32;
+        } else {
+            uxi = uxi & 1u32.wrapping_neg() >> 9i32;
+            uxi = uxi | 1u32 << 23i32;
+        }
+        if ey == 0 {
+            i = uy_i << 9i32;
+            'loop10: loop {
+                if !(i >> 31i32 == 0u32) {
+                    break;
+                }
+                ey = ey - 1;
+                i = i << 1i32;
+            }
+            uy_i = uy_i << -ey + 1i32;
+        } else {
+            uy_i = uy_i & 1u32.wrapping_neg() >> 9i32;
+            uy_i = uy_i | 1u32 << 23i32;
+        }
+        'loop12: loop {
+            if !(ex > ey) {
+                _current_block = 13;
+                break;
+            }
+            i = uxi.wrapping_sub(uy_i);
+            if i >> 31i32 == 0u32 {
+                if i == 0u32 {
+                    _current_block = 28;
+                    break;
+                }
+                uxi = i;
+            }
+            uxi = uxi << 1i32;
+            ex = ex - 1;
+        }
+        if _current_block == 13 {
+            i = uxi.wrapping_sub(uy_i);
+            if i >> 31i32 == 0u32 {
+                if i == 0u32 {
+                    return 0i32 as (f32) * x;
+                } else {
+                    uxi = i;
+                }
+            }
+            'loop16: loop {
+                if !(uxi >> 23i32 == 0u32) {
+                    break;
+                }
+                uxi = uxi << 1i32;
+                ex = ex - 1;
+            }
+            if ex > 0i32 {
+                uxi = uxi.wrapping_sub(1u32 << 23i32);
+                uxi = uxi | ex as (u32) << 23i32;
+            } else {
+                uxi = uxi >> -ex + 1i32;
+            }
+            uxi = uxi | sx;
+            ux_i = uxi;
+            mem::transmute(ux_i)
+        } else {
+            0i32 as (f32) * x
+        }
+    }
 }
