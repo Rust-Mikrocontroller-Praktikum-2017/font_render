@@ -42,7 +42,7 @@ impl<'a> TextWriter<'a> {
     }
 
     pub fn default() -> Result<Self, Error> {
-        TextWriter::new(TTF, 15, 480)
+        TextWriter::new(TTF, 11, 480)
     }
 
     pub fn set_text_size(&mut self, text_size: u32) {
