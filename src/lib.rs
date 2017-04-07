@@ -55,9 +55,9 @@ impl<'a> TextWriter<'a> {
                 true
             },
             '\n' => {
-                c = '-';
-                self.off_x = 480;
-                true
+                self.off_x = 0;
+                self.off_y += self.text_size as usize;
+                return;
             }
             _ => false,
         };
