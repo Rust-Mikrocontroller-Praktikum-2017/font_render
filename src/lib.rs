@@ -6,6 +6,8 @@ extern crate font_rs;
 use stb_truetype::{FontInfo, Rect};
 use font_rs::font;
 
+pub static TTF: &[u8] = include_bytes!("RobotoMono-Bold.ttf");
+
 #[derive(Debug)]
 pub enum Error {
     FontInfo,
@@ -37,6 +39,10 @@ impl<'a> TextWriter<'a> {
                off_x: 0,
                off_y: 0,
            })
+    }
+
+    pub fn default() -> Result<Self, Error> {
+        TextWriter::new(TTF, 15, 480)
     }
 
     pub fn print_char<F>(&mut self, mut c: char, mut print_at: F)
