@@ -108,3 +108,6 @@ Note that you can't use the lcd struct directly as long as the `Writer` instance
 }
 // lcd is valid again
 ```
+
+## Known Problems
+This doesn't work in `--release` mode currently due to linker errors.
