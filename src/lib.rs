@@ -50,6 +50,11 @@ impl<'a> TextWriter<'a> {
         self.text_size = text_size;
     }
 
+    pub fn set_offset(&mut self, off_x: usize, off_y: usize) {
+        self.off_x = off_x;
+        self.off_y = off_y;
+    }
+
     pub fn print_char<F>(&mut self, mut c: char, mut print_at: F)
         where
         F: FnMut(Coords, u8)
