@@ -22,16 +22,18 @@ pub struct TextWriter<'a> {
     font_info: FontInfo<&'a [u8]>,
     font: font::Font<'a>,
     text_size: u32,
+    break_at: usize,
     off_x: usize,
     off_y: usize,
 }
 
 impl<'a> TextWriter<'a> {
-    pub fn new(ttf: &'a [u8], text_size: u32) -> Result<Self, Error> {
+    pub fn new(ttf: &'a [u8], text_size: u32, break_at: usize) -> Result<Self, Error> {
         Ok(TextWriter {
                font_info: FontInfo::new(ttf, 0).ok_or(Error::FontInfo)?,
                font: font::parse(ttf)?,
                text_size: text_size,
+               break_at: break_at,
                off_x: 0,
                off_y: 0,
            })
@@ -58,7 +60,7 @@ impl<'a> TextWriter<'a> {
         let glyph = self.font
             .render_glyph(glyph_id as u16, self.text_size)
             .expect("Failed to render glyph");
-        if self.off_x + glyph.width >= 480 {
+        if self.off_x + glyph.width >= self.break_at {
             self.off_x = 0;
             self.off_y += self.text_size as usize;
         }
