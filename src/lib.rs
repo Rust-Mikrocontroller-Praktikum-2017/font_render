@@ -102,7 +102,7 @@ impl<'a> TextWriter<'a> {
         }
     }
 
-    pub fn aabb_char(&self, mut c: char) -> Rect<i32> {
+    pub fn char_width_height(&self, mut c: char) -> (u32, u32) {
         match c {
             ' ' => {
                 c = '-';
@@ -115,10 +115,13 @@ impl<'a> TextWriter<'a> {
 
         //let scale_factor = self.font_info.scale_for_pixel_height(self.text_size as f32);
         let scale_factor = self.font_info.scale_for_mapping_em_to_pixels(self.text_size as f32);
-
+        let h_metrics = self.font_info.get_codepoint_h_metrics(c.into());
         let rect = self.font_info.get_codepoint_bitmap_box(c.into(),scale_factor,scale_factor).unwrap();
 
-        rect
+        let left_side_bearing = (h_metrics.left_side_bearing as f32 * scale_factor) as i32;
+        let width = rect.x1 + 1 - rect.x0 + left_side_bearing;
+
+        (width as u32, self.text_size)
     }
 
     pub fn width_height(&self, s: &str) -> (u32, u32) {
@@ -128,10 +131,9 @@ impl<'a> TextWriter<'a> {
         let mut height = 0;
 
         for c in s.chars() {
-            let char_rect = self.aabb_char(c);
-            let h_metrics = self.font_info.get_codepoint_h_metrics(c.into());
-            width += char_rect.x1 - char_rect.x0 + h_metrics.left_side_bearing + h_metrics.advance_width;
-            height = max(height, char_rect.y1 - char_rect.y0);
+            let (char_width, char_height) = self.char_width_height(c);
+            width += char_width;
+            height = max(height, char_height);
         }
         (width as u32, height as u32)
     }
