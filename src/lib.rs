@@ -129,7 +129,8 @@ impl<'a> TextWriter<'a> {
 
         for c in s.chars() {
             let char_rect = self.aabb_char(c);
-            width += char_rect.x1 - char_rect.x0;
+            let h_metrics = self.font_info.get_codepoint_h_metrics(c.into());
+            width += char_rect.x1 - char_rect.x0 + h_metrics.left_side_bearing + h_metrics.advance_width;
             height = max(height, char_rect.y1 - char_rect.y0);
         }
         (width as u32, height as u32)
