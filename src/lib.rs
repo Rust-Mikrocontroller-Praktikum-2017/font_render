@@ -113,15 +113,10 @@ impl<'a> TextWriter<'a> {
             _ => {},
         }
 
-        let mut rect = self.font_info.get_codepoint_bitmap_box(c.into(),1.0,1.0).unwrap();
-
         //let scale_factor = self.font_info.scale_for_pixel_height(self.text_size as f32);
         let scale_factor = self.font_info.scale_for_mapping_em_to_pixels(self.text_size as f32);
 
-        rect.x0 = ((rect.x0 as f32) * scale_factor) as i32;
-        rect.x1 = ((rect.x1 as f32) * scale_factor) as i32;
-        rect.y0 = ((rect.y0 as f32) * scale_factor) as i32;
-        rect.y1 = ((rect.y1 as f32) * scale_factor) as i32;
+        let rect = self.font_info.get_codepoint_bitmap_box(c.into(),scale_factor,scale_factor).unwrap();
 
         rect
     }
