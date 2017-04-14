@@ -2,6 +2,7 @@
 name = "font_render"
 version = "0.1.0"
 authors = ["Philipp Oppermann <dev@phil-opp.com>"]
+license = "MIT/Apache-2.0"
 
 [dependencies]
 font-rs = {git = "https://github.com/phil-opp/font-rs.git", branch = "no-std"}
